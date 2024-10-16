@@ -24,7 +24,7 @@ def lambda_handler(event, context):
 	gray_img_array = np.array(img_gray)
 
 	# Create a repeated pattern
-	repeated_array = np.tile(gray_img_array, (10, 10))  
+	# repeated_array = np.tile(gray_img_array, (10, 10))  
 
 	return {
 	'statusCode': 200
