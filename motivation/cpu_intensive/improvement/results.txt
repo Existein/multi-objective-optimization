@@ -1,0 +1,17 @@
+Configuration with the lowest cost:
+LogStreamName          2024/10/14/[$LATEST]9b527afc1625439bb46aeef50c...
+Duration (ms)                                                    1553.65
+BilledDuration (ms)                                                 1554
+MemorySize (MB)                                                     1216
+MaxMemoryUsed (MB)                                                    32
+avg. cost                                                       0.030763
+
+Configuration with the lowest duration within 10% margin cost:
+LogStreamName          2024/10/14/[$LATEST]f73f892532f24a48926e6aaff7...
+Duration (ms)                                                    1100.83
+BilledDuration (ms)                                                 1101
+MemorySize (MB)                                                     1856
+MaxMemoryUsed (MB)                                                    32
+avg. cost                                                       0.033266
+
+Percentage improvement in execution time: 29.15%
