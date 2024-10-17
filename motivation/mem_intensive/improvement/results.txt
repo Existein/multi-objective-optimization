@@ -15,3 +15,23 @@ MaxMemoryUsed (MB)                                                   171
 avg. cost                                                       0.007556
 
 Percentage improvement in execution time: 29.56%
+
+
+Configuration with the lowest duration:
+LogStreamName          2024/10/16/[$LATEST]3fe77d3828fa40389f9e293958...
+Duration (ms)                                                     254.23
+BilledDuration (ms)                                                  254
+MemorySize (MB)                                                     2944
+MaxMemoryUsed (MB)                                                   171
+avg. cost                                                       0.012173
+
+Configuration with the lowest cost within 10% margin duration:
+LogStreamName          2024/10/16/[$LATEST]ac80cf88e9f14d878d8c3c59f6...
+Duration (ms)                                                     259.09
+BilledDuration (ms)                                                  259
+MemorySize (MB)                                                     1792
+MaxMemoryUsed (MB)                                                   171
+avg. cost                                                       0.007556
+
+Cost savings: -0.004618
+Percentage cost savings: 37.93%
