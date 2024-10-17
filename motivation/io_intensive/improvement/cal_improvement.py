@@ -47,7 +47,7 @@ print(f"\nCost savings: {cost_savings:.6f}")
 print(f"Percentage cost savings: {cost_savings_percentage:.2f}%")
 
 # Write the results to a text file
-with open('results.txt', 'w') as file:
+with open('io_results.txt', 'w') as file:
     file.write("Configuration with the lowest cost:\n")
     file.write(min_cost_row.to_string())
     file.write("\n\nConfiguration with the lowest duration within 10% margin cost:\n")
