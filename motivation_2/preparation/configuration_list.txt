@@ -1,0 +1,41 @@
+DataIngest
+Memory Settings vs Avg Time from LogResult:
+128MB: 0.1919 sec
+192MB: 0.1288 sec
+256MB: 0.1088 sec
+320MB: 0.0928 sec
+384MB: 0.0937 sec
+
+DataTransform
+Memory Settings vs Avg Time from LogResult:
+128MB: 0.1657 sec
+192MB: 0.1379 sec
+256MB: 0.1046 sec
+320MB: 0.1191 sec
+
+ModelInference
+Memory Settings vs Avg Time from LogResult:
+128MB: 10.7054 sec
+192MB: 6.8449 sec
+256MB: 5.2124 sec
+320MB: 4.0405 sec
+384MB: 3.5630 sec
+448MB: 3.0063 sec
+512MB: 2.6584 sec
+576MB: 2.2294 sec
+640MB: 2.1082 sec
+704MB: 1.9425 sec
+768MB: 1.7752 sec
+832MB: 1.5863 sec
+896MB: 1.5057 sec
+960MB: 1.4914 sec
+
+PostProcessing
+Memory Settings vs Avg Time from LogResult:
+128MB: 0.3201 sec
+192MB: 0.1777 sec
+256MB: 0.1381 sec
+320MB: 0.1116 sec
+384MB: 0.0955 sec
+448MB: 0.0806 sec
+512MB: 0.0796 sec

@@ -1,0 +1,80 @@
+Next point to probe is: 128
+Fuction duration time (ms): {519.97}
+Samples so far: 1
+Next point to probe is: 1216
+Fuction duration time (ms): {77.39}
+Samples so far: 2
+Next point to probe is: 3008
+Fuction duration time (ms): {65.33}
+Samples so far: 3
+Next point to probe is: {'m': 320}
+Fuction duration time (ms): {383.91}
+Found the cost to be: 2.199571240625e-06
+Samples so far: 4
+Next point to probe is: {'m': 128}
+Fuction duration time (ms): {497.24}
+Found the cost to be: 1.235937385e-06
+Samples so far: 5
+Next point to probe is: {'m': 128}
+Fuction duration time (ms): {55.18}
+Found the cost to be: 3.1496063250000003e-07
+Samples so far: 6
+Next point to probe is: {'m': 704}
+Fuction duration time (ms): {202.0}
+Found the cost to be: 2.5146296250000007e-06
+Samples so far: 7
+Next point to probe is: {'m': 2048}
+Fuction duration time (ms): {109.89}
+Found the cost to be: 3.86307326e-06
+Samples so far: 8
+Next point to probe is: {'m': 832}
+Fuction duration time (ms): {199.82}
+Found the cost to be: 2.90594995125e-06
+Samples so far: 9
+Next point to probe is: {'m': 1728}
+Fuction duration time (ms): {121.04}
+Found the cost to be: 3.604318085000001e-06
+Samples so far: 10
+Next point to probe is: {'m': 1792}
+Fuction duration time (ms): {70.41}
+Found the cost to be: 2.2536660725e-06
+Samples so far: 11
+Next point to probe is: {'m': 192}
+Fuction duration time (ms): {705.48}
+Found the cost to be: 2.4046690925000003e-06
+Samples so far: 12
+Next point to probe is: {'m': 2688}
+Fuction duration time (ms): {116.02}
+Found the cost to be: 5.2759765175e-06
+Samples so far: 13
+Next point to probe is: {'m': 2624}
+Fuction duration time (ms): {116.4}
+Found the cost to be: 5.171349425e-06
+Samples so far: 14
+Next point to probe is: {'m': 768}
+Fuction duration time (ms): {234.15}
+Found the cost to be: 3.1269335375000002e-06
+Samples so far: 15
+Next point to probe is: {'m': 1536}
+Fuction duration time (ms): {119.41}
+Found the cost to be: 3.185309705e-06
+Samples so far: 16
+Next point to probe is: {'m': 128}
+Fuction duration time (ms): {493.51}
+Found the cost to be: 1.22816639625e-06
+Samples so far: 17
+Next point to probe is: {'m': 128}
+Fuction duration time (ms): {61.49}
+Found the cost to be: 3.2810672875e-07
+Samples so far: 18
+Next point to probe is: {'m': 1600}
+Fuction duration time (ms): {129.38}
+Found the cost to be: 3.5693382187500005e-06
+Samples so far: 19
+Next point to probe is: {'m': 2880}
+Fuction duration time (ms): {136.42}
+Found the cost to be: 6.59481539375e-06
+Samples so far: 20
+BEST RESULT:
+Memory: 128.38565098674596 MB
+Cost: 3.1496063250000003e-07 USD

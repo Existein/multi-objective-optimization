@@ -1,0 +1,26 @@
+{
+"Comment": "Workflow for DataIngest -> DataTransform -> ModelInference -> PostProcessing",
+"StartAt": "DataIngest",
+"States": {
+    "DataIngest": {
+    "Type": "Task",
+    "Resource": "arn:aws:lambda:region:account-id:function:DataIngestFunction",
+    "Next": "DataTransform"
+    },
+    "DataTransform": {
+    "Type": "Task",
+    "Resource": "arn:aws:lambda:region:account-id:function:DataTransformFunction",
+    "Next": "ModelInference"
+    },
+    "ModelInference": {
+    "Type": "Task",
+    "Resource": "arn:aws:lambda:region:account-id:function:ModelInferenceFunction",
+    "Next": "PostProcessing"
+    },
+    "PostProcessing": {
+    "Type": "Task",
+    "Resource": "arn:aws:lambda:region:account-id:function:PostProcessingFunction",
+    "End": true
+    }
+}
+}

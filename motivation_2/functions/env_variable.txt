@@ -1,0 +1,9 @@
+DATA_BUCKET=motivation-2-bucket
+SOURCE_KEY=raw_data/input_data.json
+STAGE1_KEY=stage1_output.json
+STAGE2_KEY=stage2_output.json
+STAGE3_KEY=stage3_output.json
+MODEL_KEY=model/model.pkl
+VEC_KEY=model/vectorizer.pkl
+RESULT_TABLE=motivation-2-table
+RUN_ID=example-run-001
