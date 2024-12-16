@@ -3,3 +3,4 @@ motivation_2/preperation
 motivation_2/cost_cal.py
 motivation_2/cost_top50.py
 motivation_2/top_50_lowest_total_cost_rows.csv
+venv/
