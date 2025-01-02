@@ -1,0 +1,8 @@
+numpy
+matplotlib
+pillow
+scikit-learn
+bayesian-optimization
+torch
+botorch
+boto3
