@@ -15,6 +15,7 @@ from pathlib import Path
 
 import torch
 import numpy as np
+import matplotlib.pyplot as plt
 
 from botorch import fit_gpytorch_mll
 from botorch.models import SingleTaskGP, ModelListGP
@@ -26,6 +27,7 @@ from botorch.exceptions import BadInitialCandidatesWarning
 from botorch.utils.sampling import draw_sobol_samples
 from botorch.utils.transforms import normalize, unnormalize
 from botorch.utils.multi_objective.box_decompositions.dominated import DominatedPartitioning
+from botorch.utils.multi_objective.pareto import is_non_dominated
 
 warnings.filterwarnings("ignore", category=BadInitialCandidatesWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -39,10 +41,10 @@ tkwargs = {
 }
 # SMOKE_TEST = os.environ.get("SMOKE_TEST")
 NOISE_SE = torch.tensor([1.0, 0.05], **tkwargs)
-NUM_SAMPLES=64
+NUM_SAMPLES=128
 
 #######################################################################
-# (1) StepFunctionsProblem: (X)->( -time, -cost )
+# StepFunctionsProblem: (X)->( -time, -cost )
 #######################################################################
 import boto3
 
@@ -60,6 +62,19 @@ import numpy as np
 
 sf_client = boto3.client('stepfunctions', region_name='us-east-1')
 
+def find_function_times(data):
+    """
+    Recursively search for 'functionTimes' in nested dictionaries.
+    """
+    if isinstance(data, dict):
+        if "functionTimes" in data:
+            return data["functionTimes"]
+        for key, value in data.items():
+            result = find_function_times(value)
+            if result:
+                return result
+    return None
+
 def run_stepfunctions_workflow(mem_list):
     """
     mem_list: ex) [m1, m2, m3, m4] (각 함수의 메모리 MB)
@@ -71,68 +86,55 @@ def run_stepfunctions_workflow(mem_list):
     4) 총 실행 시간 = 각 함수 time 합(순차 구조 가정)
     5) (total_time, total_cost) 반환
     """
-    # 1) Step Functions 입력으로 alias 설정
-    payload = {}
-    for i, mem in enumerate(mem_list, start=1):
-        payload[f"F{i}Alias"] = f"{int(mem)}MB"
+    # print("Debug: Starting Step Functions workflow")
+    payload = {f"F{i}Alias": f"{int(mem)}MB" for i, mem in enumerate(mem_list, start=1)}
 
-    # 2) Step Functions 실행
     start_time = time.time()
     response = sf_client.start_execution(
         stateMachineArn="arn:aws:states:us-east-1:891376968462:stateMachine:ml-pipeline",
         input=json.dumps(payload)
     )
     exec_arn = response["executionArn"]
+    # print(f"Debug: Execution ARN: {exec_arn}")
 
-    # 3) 실행 완료 대기
     while True:
         desc = sf_client.describe_execution(executionArn=exec_arn)
         if desc["status"] in ["SUCCEEDED", "FAILED", "TIMED_OUT", "ABORTED"]:
+            # print(f"Debug: Execution ended with status {desc['status']}")
             break
         time.sleep(1)
 
     end_time = time.time()
     wall_clock_sec = end_time - start_time
-    
-    # 기본값
     total_time = wall_clock_sec
     total_cost = 9999.0
 
     if desc["status"] == "SUCCEEDED":
         try:
             output_data = json.loads(desc.get("output", "{}"))
-            # 최종 상태 output에서 functionTimes, ex: {"F1":1.2, "F2":..., "F3":..., "F4":...}
-            func_times = output_data.get("functionTimes", None)
-            if func_times is not None:
-                # 4) 각 함수 실행 시간을 합산 (순차 구조 가정)
-                #    total_time = sum(func_times.values())
-                #    or, 만약 'exec_time_s' 4개를 그냥 더하는 경우
-                sum_time = 0.0
-                for key in sorted(func_times.keys()):
-                    sum_time += float(func_times[key])
+            # print(f"Debug: Full Output Data: {json.dumps(output_data, indent=2)}")
+            func_times = find_function_times(output_data)
+            if func_times:
+                sum_time = sum(float(func_times[key]) for key in func_times)
                 total_time = sum_time
 
-                # 5) 비용 계산: sum( time_i * (mem_list[i]/1024) * rate )
                 rate = 0.00001667
-                cost_sum = 0.0
-                # mem_list[i]에 대응 -> F{i}
-                for i, key in enumerate(sorted(func_times.keys()), start=0):
-                    f_time = float(func_times[key])  # sec
-                    f_mem = float(mem_list[i])
-                    cost_sum += f_time * (f_mem/1024.0) * rate
+                cost_sum = sum(float(func_times[key]) * (mem_list[i] / 1024.0) * rate
+                                for i, key in enumerate(func_times))
                 total_cost = cost_sum
+                # print("Debug: Successfully calculated time and cost")
             else:
-                total_time = wall_clock_sec
-                total_cost = 9999.0
-
-        except Exception:
+                print("Debug: functionTimes not found in output")
+        except Exception as e:
+            print(f"Debug: Exception occurred: {e}")
             total_time = 999999.0
             total_cost = 9999.0
     else:
-        # 실패/timeout
+        print("Debug: Inside non-success branch")
         total_time = 999999.0
         total_cost = 9999.0
 
+    # print(f"Debug: Returning total_time={total_time}, total_cost={total_cost}")
     return total_time, total_cost
 
 
@@ -164,7 +166,7 @@ class StepFunctionsProblem:
         return torch.tensor(out, **tkwargs)
 
 #######################################################################
-# (2) 초기 데이터 / 모델 초기화
+# 초기 데이터 / 모델 초기화
 #######################################################################
 def generate_initial_data(problem, n_init=3):
     """
@@ -182,8 +184,19 @@ def initialize_model(train_x, train_obj, problem):
     """
     # normalize X
     Xn = (train_x - problem.bounds[0]) / (problem.bounds[1]-problem.bounds[0])
+    
     y_time = train_obj[...,0:1]  # shape(n,1)
     y_cost = train_obj[...,1:2]  # shape(n,1)
+
+    # manually normalize y_time (삭제할 수도)
+    mean_time = y_time.mean()
+    std_time = y_time.std()
+    y_time = (y_time - mean_time) / (std_time + 1e-9)
+
+    # manually normalize y_cost (삭제할 수도)
+    mean_cost = y_cost.mean()
+    std_cost = y_cost.std()
+    y_cost = (y_cost - mean_cost) / (std_cost + 1e-9)
 
     gp_time = SingleTaskGP(Xn, y_time)
     gp_cost = SingleTaskGP(Xn, y_cost)
@@ -195,9 +208,9 @@ def initialize_model(train_x, train_obj, problem):
     return mll, model
 
 #######################################################################
-# (3) qNEHVI optimize
+# qLNEHVI optimize
 #######################################################################
-def optimize_acqf_and_get_observation(model, train_x, problem, batch_size=2, restarts=5, raw_samples=64, sampler = None):
+def optimize_acqf_and_get_observation(model, train_x, problem, batch_size=2, restarts=10, raw_samples=128, sampler = None):
     # ref point ( -600, -10 ) etc. => time=600s, cost=$10 worse
     ref_point = torch.tensor([-600.0, -10.0], dtype=torch.double)
     qnehvi = qLogNoisyExpectedHypervolumeImprovement(
@@ -229,7 +242,55 @@ def optimize_acqf_and_get_observation(model, train_x, problem, batch_size=2, res
     return new_x, new_obj, new_obj_true
 
 #######################################################################
-# (4) BO 루프
+# Visulaization
+#######################################################################
+def visualize_results(y, hvs):
+    """
+    Visualize Pareto front and hypervolume progression, then save to file.
+    y: Final objectives (Tensor, shape: [N, 2])
+    hvs: List of hypervolumes at each batch
+    """
+    mask = is_non_dominated(y)  # BoTorch 함수
+    y_nd = y[mask].cpu().numpy()
+
+    # 예: 두 번째 컬럼(-cost) 기준 정렬
+    sorted_idx = y_nd[:, 1].argsort()
+    pareto_front = y_nd[sorted_idx]
+
+    plt.figure(figsize=(12, 5))
+    plt.subplot(1, 2, 1)
+    plt.plot(-pareto_front[:, 0], -pareto_front[:, 1], 'o-')
+    plt.xlabel("Execution Time (s)")
+    plt.ylabel("Cost ($)")
+    plt.title("Pareto Front: Execution Time vs. Cost")
+    plt.grid()
+
+    plt.subplot(1, 2, 2)
+    plt.plot(range(1, len(hvs) + 1), hvs, marker='o')
+    plt.xlabel("Iteration")
+    plt.ylabel("Hypervolume")
+    plt.title("Hypervolume Progression")
+    plt.grid()
+
+    plt.tight_layout()
+    plt.savefig("results.png")
+    plt.close()
+    
+#######################################################################
+# pareto front
+#######################################################################
+    
+def get_pareto_inputs(train_x, train_obj_true):
+    """
+    Get the input values corresponding to Pareto front points.
+    """
+    pareto_mask = is_non_dominated(train_obj_true)  # Identify Pareto points
+    pareto_inputs = train_x[pareto_mask]           # Get inputs for Pareto points
+    pareto_outputs = train_obj_true[pareto_mask]   # Get outputs for Pareto points
+    return pareto_inputs, pareto_outputs    
+
+#######################################################################
+# BO 루프
 #######################################################################
 def bo_loop(
     dim=4,
@@ -282,7 +343,6 @@ def bo_loop(
         
         if verbose:
             # calculate HV or best cost ...
-            # (optional)
             print(
             f"\nBatch {iteration:>2}: Hypervolume (qLNEHVI) = "
             f"({hvs[-1]:>4.2f}), time = {t1-t0:>4.2f}.",
@@ -290,20 +350,28 @@ def bo_loop(
         )
         else:
             print(".", end="")
-
+            
+    # Visualize results
+    visualize_results(train_obj_true, hvs)
+    
     return train_x, train_obj
 
 #######################################################################
-# (5) main
+# main
 #######################################################################
 if __name__=="__main__":
     final_x, final_y = bo_loop(
         dim=4,
-        n_init=3,       # 초기 탐색 점
-        n_batch=20,     # 총 이터레이션
-        batch_size=3,   # 배치 크기
+        n_init=10,       # 초기 탐색 점
+        n_batch=90,     # 총 이터레이션
+        batch_size=1,   # 배치 크기
         verbose=True
     )
     print("=== Done ===")
     print(f"Collected {final_x.shape[0]} points")
     print("final_y sample:\n", final_y[:5])
+
+    # Get Pareto inputs and outputs
+    pareto_inputs, pareto_outputs = get_pareto_inputs(final_x, final_y)
+    print("\nPareto Front Inputs:\n", pareto_inputs)
+    print("\nPareto Front Outputs:\n", pareto_outputs)
