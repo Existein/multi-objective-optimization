@@ -5,4 +5,4 @@ venv/
 motivation_2/**/*.py
 motivation_2/functions/code.zip
 motivation_1/**/*.py
-*.py
+**/*.py
