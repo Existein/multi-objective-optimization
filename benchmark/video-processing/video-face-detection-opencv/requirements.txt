@@ -1,0 +1,4 @@
+opencv-python-headless==4.7.0.72
+boto3==1.26.137
+Pillow==9.5.0
+numpy==1.21.5

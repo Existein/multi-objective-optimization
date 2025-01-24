@@ -1,0 +1,51 @@
+Batch  1: Hypervolume (qLNEHVI) = (5996.46), time = 35.70.
+Batch  2: Hypervolume (qLNEHVI) = (5996.46), time = 26.04.
+Batch  3: Hypervolume (qLNEHVI) = (5996.46), time = 16.45.
+Batch  4: Hypervolume (qLNEHVI) = (5996.57), time = 18.13.
+Batch  5: Hypervolume (qLNEHVI) = (5996.57), time = 24.04.
+Batch  6: Hypervolume (qLNEHVI) = (5996.57), time = 22.72.
+Batch  7: Hypervolume (qLNEHVI) = (5996.57), time = 32.59.
+Batch  8: Hypervolume (qLNEHVI) = (5996.57), time = 18.14.
+Batch  9: Hypervolume (qLNEHVI) = (5996.57), time = 29.27.
+Batch 10: Hypervolume (qLNEHVI) = (5997.09), time = 12.80.
+Batch 11: Hypervolume (qLNEHVI) = (5997.09), time = 16.91.
+Batch 12: Hypervolume (qLNEHVI) = (5997.09), time = 40.58.
+Batch 13: Hypervolume (qLNEHVI) = (5997.34), time = 10.24.
+Batch 14: Hypervolume (qLNEHVI) = (5997.46), time = 7.74.
+Batch 15: Hypervolume (qLNEHVI) = (5997.46), time = 7.15.
+Batch 16: Hypervolume (qLNEHVI) = (5997.46), time = 7.45.
+Batch 17: Hypervolume (qLNEHVI) = (5997.85), time = 7.25.
+Batch 18: Hypervolume (qLNEHVI) = (5997.85), time = 7.72.
+Batch 19: Hypervolume (qLNEHVI) = (5997.85), time = 6.16.
+Batch 20: Hypervolume (qLNEHVI) = (5997.85), time = 6.69.
+Batch 21: Hypervolume (qLNEHVI) = (5997.85), time = 58.40.
+Batch 22: Hypervolume (qLNEHVI) = (5997.85), time = 9.43.
+Batch 23: Hypervolume (qLNEHVI) = (5997.85), time = 19.55.
+Batch 24: Hypervolume (qLNEHVI) = (5997.85), time = 38.26.
+Batch 25: Hypervolume (qLNEHVI) = (5997.85), time = 23.51.
+Batch 26: Hypervolume (qLNEHVI) = (5997.85), time = 9.61.
+Batch 27: Hypervolume (qLNEHVI) = (5997.85), time = 6.58.
+Batch 28: Hypervolume (qLNEHVI) = (5997.85), time = 12.90.
+Batch 29: Hypervolume (qLNEHVI) = (5997.85), time = 7.79.
+Batch 30: Hypervolume (qLNEHVI) = (5997.85), time = 7.88.=== Done ===
+Collected 100 points
+final_y sample:
+ tensor([[-3.8337,  0.1120],
+        [-9.2268,  0.0278],
+        [-0.6047, -0.0219],
+        [-4.6361,  0.0796],
+        [-0.6174,  0.0172]], dtype=torch.float64)
+
+Pareto Front Inputs:
+ tensor([[1530.9213, 1299.8695,  942.0541, 2347.0174],
+        [3008.0000,  128.0000, 3008.0000, 3008.0000],
+        [2284.1835,  785.9679, 1123.8031, 1302.5361],
+        [ 128.0000,  128.0000, 3008.0000, 3008.0000],
+        [3008.0000,  128.0000, 3008.0000, 3008.0000]], dtype=torch.float64)
+
+Pareto Front Outputs:
+ tensor([[ 2.9132e+00,  5.3668e-04],
+        [ 2.3833e+00,  5.6729e-02],
+        [-6.6958e+00,  1.3859e-01],
+        [ 1.2612e+00,  8.0586e-02],
+        [ 2.9013e-02,  1.3063e-01]], dtype=torch.float64)

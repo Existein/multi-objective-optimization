@@ -1,9 +1,9 @@
-
+**/*.py
+**/*.json
 motivation_2/deprecated
 motivation_2/preperation
 motivation_2/top_50_lowest_total_cost_rows.csv
 venv/
-motivation_2/**/*.py
 motivation_2/functions/code.zip
-motivation_1/**/*.py
-search/**/*.py
+archive/
+logs/
